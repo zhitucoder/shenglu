@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+faster-whisper
+openai
+python-multipart
+pydantic
+pytest
+httpx
+python-dotenv
+opencc-python-reimplemented
+pymysql
