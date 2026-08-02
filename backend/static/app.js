@@ -8,6 +8,7 @@ const $ = (sel) => document.querySelector(sel);
 
 const dropzone = $("#dropzone");
 const fileInput = $("#fileInput");
+const reel = $("#reel");
 const progressWrap = $("#progressWrap");
 const progressFill = $("#progressFill");
 const progressText = $("#progressText");
@@ -15,6 +16,8 @@ const uploadError = $("#uploadError");
 const currentInfo = $("#currentInfo");
 const currentIdEl = $("#currentId");
 const currentStatusEl = $("#currentStatus");
+
+const STATUS_TEXT = { done: "完成", processing: "转写中", failed: "失败" };
 
 dropzone.addEventListener("click", () => fileInput.click());
 dropzone.addEventListener("dragover", (e) => {
@@ -47,30 +50,37 @@ async function loadHistory() {
     const li = document.createElement("li");
     li.className = "history-item";
     li.dataset.id = s.id;
+    if (s.id === currentId) li.classList.add("active");
 
-    const nameSpan = document.createElement("span");
-    nameSpan.className = "h-name";
-    nameSpan.textContent = s.name || s.filename;
+    const top = document.createElement("div");
+    top.className = "h-item-top";
+    const name = document.createElement("span");
+    name.className = "h-name";
+    name.textContent = s.name || s.filename;
+    const st = document.createElement("span");
+    st.className = "h-status " + s.status;
+    st.innerHTML = `<i></i>${STATUS_TEXT[s.status] || s.status}`;
+    top.append(name, st);
 
-    const meta = document.createElement("span");
+    const meta = document.createElement("div");
     meta.className = "h-meta";
     meta.textContent =
-      `${s.created_at.slice(0, 16)} · ${s.filename} · ${s.status}` +
-      (s.duration_sec != null ? ` · 转写耗时 ${s.duration_sec}s` : "");
+      `${s.created_at.slice(0, 16)} · ${s.filename}` +
+      (s.duration_sec != null ? ` · 耗时 ${s.duration_sec}s` : "");
 
-    const actions = document.createElement("span");
+    const actions = document.createElement("div");
     actions.className = "h-actions";
     const btnRename = document.createElement("button");
-    btnRename.className = "btn btn-ghost btn-sm";
+    btnRename.className = "btn ghost sm";
     btnRename.textContent = "改名";
     const btnOpen = document.createElement("button");
-    btnOpen.className = "btn btn-sm";
+    btnOpen.className = "btn primary sm";
     btnOpen.textContent = "打开";
     btnRename.addEventListener("click", () => renameSession(s));
     btnOpen.addEventListener("click", () => openSession(s.id));
     actions.append(btnRename, btnOpen);
 
-    li.append(nameSpan, meta, actions);
+    li.append(top, meta, actions);
     ul.appendChild(li);
   });
 }
@@ -101,6 +111,7 @@ async function openSession(id) {
   $("#dlTranscript").classList.add("hidden");
   $("#dlReport").classList.add("hidden");
   showTranscriptTab();
+  loadHistory();
   await loadCurrent();
 }
 
@@ -155,6 +166,7 @@ async function handleFile(file) {
   const fd = new FormData();
   fd.append("file", file);
   progressWrap.classList.remove("hidden");
+  reel.classList.add("spin");
   setProgress(0);
   try {
     const resp = await fetch("/api/audio", { method: "POST", body: fd });
@@ -166,9 +178,11 @@ async function handleFile(file) {
     currentIdEl.textContent = currentId;
     currentStatusEl.textContent = "转写中...";
     resetContent();
+    loadHistory();
     startPolling();
   } catch (err) {
     progressWrap.classList.add("hidden");
+    reel.classList.remove("spin");
     uploadError.textContent = "上传失败: " + err.message;
     uploadError.classList.remove("hidden");
   }
@@ -201,6 +215,7 @@ async function pollStatus() {
   }
   stopPolling();
   progressWrap.classList.add("hidden");
+  reel.classList.remove("spin");
   if (data.status === "failed") {
     currentStatusEl.textContent = "失败";
     uploadError.textContent = "转写失败: " + (data.error || "未知错误");
