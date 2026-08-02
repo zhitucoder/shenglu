@@ -1,0 +1,104 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+  background: #f0f2f5;
+  color: #1f2329;
+  min-height: 100vh;
+}
+
+.topbar {
+  background: #1a1a2e;
+  color: #fff;
+  padding: 16px 28px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.topbar h1 { font-size: 20px; }
+.topbar .sub { font-size: 13px; opacity: .7; }
+
+.layout {
+  max-width: 960px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  gap: 18px;
+}
+
+.panel {
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.08);
+}
+.panel h2 { font-size: 16px; margin-bottom: 14px; }
+
+.dropzone {
+  border: 2px dashed #c3c9d4;
+  border-radius: 8px;
+  padding: 36px;
+  text-align: center;
+  color: #5b6472;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.dropzone.dragover { border-color: #3b6ef5; background: #eef3ff; }
+.dropzone .hint { font-size: 12px; margin-top: 6px; color: #9aa2b1; }
+
+.progress { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+.progress-bar { flex: 1; height: 10px; background: #e6e9ef; border-radius: 5px; overflow: hidden; }
+#progressFill { height: 100%; width: 0; background: #3b6ef5; transition: width .3s; }
+
+.error { color: #d92b2b; margin-top: 10px; font-size: 13px; }
+.current { margin-top: 12px; font-size: 13px; color: #5b6472; }
+
+.tabs { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
+.tab {
+  border: 1px solid #d5dae2; background: #f7f8fa; padding: 6px 14px;
+  border-radius: 6px; cursor: pointer; font-size: 13px;
+}
+.tab.active { background: #3b6ef5; color: #fff; border-color: #3b6ef5; }
+.btn {
+  border: none; background: #3b6ef5; color: #fff; padding: 7px 16px;
+  border-radius: 6px; cursor: pointer; font-size: 13px;
+}
+.btn:hover { background: #2f5ad1; }
+.btn:disabled { background: #9db4e8; cursor: not-allowed; }
+.btn-ghost { background: #fff; color: #3b6ef5; border: 1px solid #3b6ef5; }
+.btn-ghost:hover { background: #eef3ff; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.spacer { flex: 1; }
+
+.history { list-style: none; max-height: 220px; overflow-y: auto; }
+.history-empty { color: #9aa2b1; padding: 10px 0; font-size: 13px; }
+.history-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 10px; border: 1px solid #e6e9ef; border-radius: 6px;
+  margin-bottom: 6px; font-size: 13px;
+}
+.history-item .h-name { font-weight: 600; flex-shrink: 0; }
+.history-item .h-meta { color: #5b6472; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-item .h-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+.content {
+  background: #f7f8fa; border: 1px solid #e6e9ef; border-radius: 6px;
+  padding: 14px; max-height: 420px; overflow: auto;
+  white-space: pre-wrap; word-break: break-word; font-size: 14px; line-height: 1.7;
+}
+
+.chat-box {
+  height: 340px; overflow-y: auto; border: 1px solid #e6e9ef;
+  border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 10px;
+}
+.chat-placeholder { color: #9aa2b1; text-align: center; margin: auto; }
+.msg { max-width: 80%; padding: 8px 12px; border-radius: 8px; line-height: 1.6; font-size: 14px; }
+.msg.user { align-self: flex-end; background: #3b6ef5; color: #fff; }
+.msg.assistant { align-self: flex-start; background: #eef3ff; color: #1f2329; }
+
+.chat-input { display: flex; gap: 10px; margin-top: 12px; }
+.chat-input input {
+  flex: 1; padding: 9px 12px; border: 1px solid #d5dae2; border-radius: 6px; font-size: 14px;
+}
+
+.hidden { display: none !important; }

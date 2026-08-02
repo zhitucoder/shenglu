@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>音频识别助手</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="topbar">
+  <h1>音频识别助手</h1>
+  <span class="sub">转写 · 总结 · 问答</span>
+</header>
+
+<main class="layout">
+  <!-- 历史记录 -->
+  <section class="panel">
+    <h2>历史记录 <button class="btn btn-ghost btn-sm" id="refreshBtn">刷新</button></h2>
+    <ul class="history" id="historyList">
+      <li class="history-empty">暂无记录, 先上传一个音频吧。</li>
+    </ul>
+  </section>
+
+  <!-- 上传区 -->
+  <section class="panel" id="uploadPanel">
+    <h2>上传音频</h2>
+    <div class="dropzone" id="dropzone">
+      <p>点击或拖拽音频文件到此处</p>
+      <p class="hint">支持 wav / mp3 / m4a / flac / ogg / aac</p>
+      <input type="file" id="fileInput" accept="audio/*,.mp3,.wav,.m4a,.flac,.ogg,.aac" hidden>
+    </div>
+    <div class="progress hidden" id="progressWrap">
+      <div class="progress-bar"><div id="progressFill"></div></div>
+      <span id="progressText">0%</span>
+    </div>
+    <p class="error hidden" id="uploadError"></p>
+    <div class="current hidden" id="currentInfo">
+      当前会话: <span id="currentId"></span> · <span id="currentStatus"></span>
+    </div>
+  </section>
+
+  <!-- 原文 / 报告 -->
+  <section class="panel hidden" id="contentPanel">
+    <div class="tabs">
+      <button class="tab active" data-tab="transcript">转写原文</button>
+      <button class="tab" data-tab="report">总结报告</button>
+      <span class="spacer"></span>
+      <a class="btn btn-ghost hidden" id="dlTranscript" href="#">下载原文</a>
+      <a class="btn btn-ghost hidden" id="dlReport" href="#">下载报告</a>
+      <button class="btn" id="genReportBtn">生成总结报告</button>
+    </div>
+    <pre class="content" id="transcriptView"></pre>
+    <pre class="content hidden" id="reportView"></pre>
+  </section>
+
+  <!-- 问答区 -->
+  <section class="panel hidden" id="chatPanel">
+    <h2>基于原文提问</h2>
+    <div class="chat-box" id="chatBox">
+      <p class="chat-placeholder">音频转写完成后, 在这里提问。</p>
+    </div>
+    <form class="chat-input" id="chatForm">
+      <input type="text" id="chatInput" placeholder="例如: 这段音频的主要内容是什么?" autocomplete="off">
+      <button type="submit" class="btn">发送</button>
+    </form>
+  </section>
+</main>
+
+<script src="/app.js"></script>
+</body>
+</html>
