@@ -5,7 +5,7 @@
 <p align="center">
   <img src="assets/hero.gif" alt="声录音频智能助手演示动画" />
   <br/>
-  <sub>动画由 <a href="https://github.com/alchaincyf/huashu-design">huashu-design</a> skill 制作 | <a href="assets/hero-animation.html">查看动画源文件</a></sub>
+  <sub><a href="assets/hero-animation.html">查看动画源文件</a></sub>
 </p>
 
 > 让每段声音，都成为可检索、可提问的知识。
