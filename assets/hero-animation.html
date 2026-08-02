@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>声录 · SHENGLU Audio Intelligence</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0d0b09;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .container {
+    position: relative;
+    width: 1200px;
+    height: 600px;
+    background:
+      radial-gradient(900px 420px at 78% -10%, rgba(224,164,88,.14), transparent 60%),
+      radial-gradient(700px 420px at -8% 110%, rgba(201,100,66,.16), transparent 60%),
+      linear-gradient(160deg, #1a1612 0%, #211b14 55%, #1a1612 100%);
+    overflow: hidden;
+    font-family: "WenQuanYi Micro Hei", "PingFang SC", "Microsoft YaHei", sans-serif;
+  }
+
+  /* 噪点 */
+  .grain {
+    position: absolute; inset: 0; opacity: .5; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='0.05'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* 内框 */
+  .frame { position: absolute; inset: 14px; border: 1px solid rgba(224,164,88,.28); }
+  .frame::before { content: ""; position: absolute; inset: 4px; border: 1px solid rgba(224,164,88,.14); }
+
+  .center {
+    position: relative; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 26px;
+  }
+
+  /* 转盘 */
+  .reel {
+    position: absolute; top: 40px; right: 90px;
+    width: 108px; height: 108px; border-radius: 50%;
+    border: 2px solid rgba(224,164,88,.5);
+    background: repeating-conic-gradient(from 0deg, rgba(224,164,88,.20) 0deg 11deg, rgba(18,16,13,0) 11deg 22deg);
+    box-shadow: 0 0 34px rgba(224,164,88,.20), inset 0 0 26px rgba(0,0,0,.5);
+    opacity: 0;
+    animation: reelIn .8s .3s cubic-bezier(.2,.9,.3,1.2) forwards, spin 6s 1.2s linear infinite;
+  }
+  .reel::before { content: ""; position: absolute; inset: 20px; border-radius: 50%; background: #262019; border: 1px solid rgba(224,164,88,.25); }
+  .reel::after { content: ""; position: absolute; inset: 0; margin: auto; width: 22px; height: 22px; border-radius: 50%; background: #e0a458; box-shadow: 0 0 16px rgba(224,164,88,.8); }
+  @keyframes reelIn { from { opacity: 0; transform: scale(.4) rotate(-120deg); } to { opacity: 1; transform: scale(1) rotate(0); } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* 小波形装饰 */
+  .wave-mark {
+    position: absolute; top: 54px; left: 84px; display: flex; gap: 4px; align-items: center; height: 40px;
+    opacity: 0; animation: fadeUp .7s 1s forwards;
+  }
+  .wave-mark span { width: 5px; border-radius: 2px; background: linear-gradient(180deg,#e0a458,#c96442); animation: bob 1.4s ease-in-out infinite; }
+  .wave-mark span:nth-child(1){height:14px;animation-delay:0s} .wave-mark span:nth-child(2){height:30px;animation-delay:.15s}
+  .wave-mark span:nth-child(3){height:20px;animation-delay:.3s} .wave-mark span:nth-child(4){height:36px;animation-delay:.45s}
+  .wave-mark span:nth-child(5){height:16px;animation-delay:.6s}
+  @keyframes bob { 0%,100%{transform:scaleY(.55)} 50%{transform:scaleY(1)} }
+
+  /* Kicker */
+  .kicker {
+    font-size: 13px; letter-spacing: 6px; color: #c99354; text-transform: uppercase;
+    opacity: 0; animation: expand .9s .5s forwards;
+  }
+  @keyframes expand { from { opacity: 0; letter-spacing: 14px; } to { opacity: 1; letter-spacing: 6px; } }
+
+  /* 主标题 */
+  .title {
+    font-family: "NotoSerifSC", Georgia, serif;
+    font-size: 96px; font-weight: 600; letter-spacing: 20px; color: #f2e9dd;
+    text-shadow: 0 0 40px rgba(224,164,88,.25);
+    opacity: 0; animation: titleUp .9s .8s forwards;
+  }
+  @keyframes titleUp { from { opacity: 0; transform: translateY(26px); } to { opacity: 1; transform: none; } }
+
+  /* 波形 */
+  .wave { display: flex; gap: 5px; align-items: center; height: 60px; }
+  .wave i {
+    width: 5px; height: 6px; border-radius: 2px;
+    background: linear-gradient(180deg, #e0a458, #c96442);
+    animation: eq 1s ease-in-out infinite;
+    animation-play-state: running;
+    opacity: 0; animation-delay: var(--d, 0s);
+  }
+  @keyframes eq { 0%,100%{height:8px;opacity:.5} 50%{height:54px;opacity:1} }
+
+  /* 流程 */
+  .pipeline { display: flex; align-items: center; gap: 12px; margin-top: 6px; }
+  .step {
+    display: flex; align-items: center; gap: 10px;
+    border: 1px solid rgba(224,164,88,.4); border-radius: 999px;
+    padding: 9px 18px; font-size: 15px; color: #f2e9dd;
+    background: rgba(224,164,88,.07);
+    opacity: 0; animation: stepIn .6s forwards;
+  }
+  .step b { font-size: 13px; color: #e0a458; margin-right: 2px; }
+  .step:nth-child(1){animation-delay:2.3s} .step:nth-child(3){animation-delay:3.0s}
+  .step:nth-child(5){animation-delay:3.7s} .step:nth-child(7){animation-delay:4.4s}
+  @keyframes stepIn { from { opacity: 0; transform: translateY(14px) scale(.9); } to { opacity: 1; transform: none; } }
+  .arrow { color: #6f6455; font-size: 18px; opacity: 0; animation: fadeUp .4s forwards; }
+  .arrow:nth-child(2){animation-delay:2.7s} .arrow:nth-child(4){animation-delay:3.4s}
+  .arrow:nth-child(6){animation-delay:4.1s}
+  @keyframes fadeUp { from { opacity: 0; } to { opacity: 1; } }
+
+  /* 标语 */
+  .tagline {
+    margin-top: 8px; font-size: 14px; letter-spacing: 3px; color: #a99b8a;
+    opacity: 0; animation: fadeUp .8s 5.2s forwards;
+  }
+
+  /* 收尾淡出, 便于 gif 循环 */
+  .fade-out { position: absolute; inset: 0; background: #0d0b09; opacity: 0; animation: fadeAll 1s 6.6s forwards; }
+  @keyframes fadeAll { to { opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="grain"></div>
+  <div class="frame"></div>
+
+  <div class="reel" aria-hidden="true"></div>
+  <div class="wave-mark" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+
+  <div class="center">
+    <div class="kicker">SHENGLU · AUDIO INTELLIGENCE</div>
+    <h1 class="title">声录</h1>
+
+    <div class="wave" aria-hidden="true">
+      <i style="--d:.0s"></i><i style="--d:.1s"></i><i style="--d:.2s"></i><i style="--d:.3s"></i>
+      <i style="--d:.4s"></i><i style="--d:.5s"></i><i style="--d:.6s"></i><i style="--d:.7s"></i>
+      <i style="--d:.8s"></i><i style="--d:.9s"></i><i style="--d:1.0s"></i><i style="--d:1.1s"></i>
+      <i style="--d:1.2s"></i><i style="--d:1.3s"></i><i style="--d:1.4s"></i><i style="--d:1.5s"></i>
+      <i style="--d:1.6s"></i><i style="--d:1.7s"></i><i style="--d:1.8s"></i><i style="--d:1.9s"></i>
+      <i style="--d:2.0s"></i><i style="--d:2.1s"></i>
+    </div>
+
+    <div class="pipeline">
+      <div class="step"><b>01</b>上传音频</div><span class="arrow">→</span>
+      <div class="step"><b>02</b>AI 转写原文</div><span class="arrow">→</span>
+      <div class="step"><b>03</b>智能总结报告</div><span class="arrow">→</span>
+      <div class="step"><b>04</b>基于原文问答</div>
+    </div>
+
+    <div class="tagline">让每段声音，都成为可检索、可提问的知识</div>
+  </div>
+
+  <div class="fade-out"></div>
+</div>
+</body>
+</html>
