@@ -248,7 +248,7 @@ MIT — 随便用，随便改。
 | 📺 B站 | [浩哥讲大模型与AI应用](https://space.bilibili.com/1235336642) |
 | 📕 小红书 | [知途程序员]|
 | 💬 CSDN | [星星之火](https://blog.csdn.net/spark_dev) |
-| 📈 雪球 | [浩哥爱AI](https://xueqiu.com/u/haoai) |
+| 📈 雪球 | [浩哥AI量化财报](https://xueqiu.com/u/haoai) |
 | 📮 公众号 | 微信搜「知途程序员知识体系」或扫码关注 ↓ |
 
 <img src="wechat-qrcode.png" alt="公众号二维码" width="360">
